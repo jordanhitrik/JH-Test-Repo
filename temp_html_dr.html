@@ -1,0 +1,696 @@
+<html>
+<head><title>Amver - Generate Deviation Report</title>
+<style type="text/css">
+table { 
+	font-family:"Trebuchet MS"; 
+	font-size:12px;
+}
+
+td { 
+	padding:5px; 
+}
+
+hr {
+	border:1px dashed #f5f5f5;
+}
+
+#text_input { 
+	background-color:#F8F8FF; 
+	font-family:Georgia, "Times New Roman", Times, serif; 
+	font-size:20px; color:#666666; 
+	padding-left:10px; 
+	padding-right:10px; 
+	padding-top:6px; 
+	padding-bottom:10px; 
+	width:300px; 
+	height:38px; 
+	border:1px solid #CCCCCC; 
+	-moz-border-radius: 10px; 
+	-webkit-border-radius: 10px; 
+	border-radius: 10px; 
+}
+
+#dropdown_input { 
+	background-color:#F8F8FF; 
+	font-family:Georgia, "Times New Roman", Times, serif; 
+	font-size:20px; color:#666666; 
+	padding-left:10px; 
+	padding-right:10px; 
+	padding-top:6px; 
+	padding-bottom:10px; 
+	width:60px; 
+	height:38px; 
+	border:1px solid #CCCCCC; 
+	-moz-border-radius: 10px; 
+	-webkit-border-radius: 10px; 
+	border-radius: 10px; 
+}
+
+#dropdown_input_wide { 
+	background-color:#F8F8FF; 
+	font-family:Georgia, "Times New Roman", Times, serif; 
+	font-size:20px; color:#666666; 
+	padding-left:10px; 
+	padding-right:10px; 
+	padding-top:6px; 
+	padding-bottom:10px; 
+	width:100px; 
+	height:38px; 
+	border:1px solid #CCCCCC; 
+	-moz-border-radius: 10px; 
+	-webkit-border-radius: 10px; 
+	border-radius: 10px; 
+}
+
+#dropdown_input_wide_medic { 
+	background-color:#F8F8FF; 
+	font-family:Georgia, "Times New Roman", Times, serif; 
+	font-size:20px; color:#666666; 
+	padding-left:10px; 
+	padding-right:10px; 
+	padding-top:6px; 
+	padding-bottom:10px; 
+	width:150px; 
+	height:38px; 
+	border:1px solid #CCCCCC; 
+	-moz-border-radius: 10px; 
+	-webkit-border-radius: 10px; 
+	border-radius: 10px; 
+}
+
+#textarea { 
+	background-color:#F8F8FF; 
+	font-family:Georgia, "Times New Roman", Times, serif; 
+	font-size:20px; color:#666666; 
+	padding-left:10px; 
+	padding-right:10px; 
+	padding-top:6px; 
+	padding-bottom:10px; 
+	width:400px; 
+	height:300px; 
+	border:1px solid #CCCCCC; 
+	-moz-border-radius: 10px; 
+	-webkit-border-radius: 10px; 
+	border-radius: 10px; 
+}
+
+#output {
+	float:right;
+}
+
+#invis {
+	display:none;
+}
+</style>
+<script type="text/javascript">
+	var l_lines_str = "";
+	
+	function generate_dr() {
+		message = 'AMVER/DR//\n'
+		+ 'A/' + document.amver_dr.vessel_name.value.toUpperCase() + '/' + document.amver_dr.call_sign.value.toUpperCase() + '//\n'
+		+ 'B/' + document.amver_dr.day.value + document.amver_dr.hour.value + document.amver_dr.minute.value + ' ' + document.amver_dr.month.value + '/\n'
+		+ 'C/' + document.amver_dr.lat_deg.value + document.amver_dr.lat_min.value + document.amver_dr.north_south.value + '/' + document.amver_dr.lon_deg.value + document.amver_dr.lon_min.value + document.amver_dr.east_west.value + '//\n'
+		+ 'E/' + document.amver_dr.course.value + '//\n'
+		+ 'F/' + document.amver_dr.speed.value + '//\n'
+		+ 'I/' + document.amver_dr.port_name.value.toUpperCase() + '/' + document.amver_dr.port_lat_deg.value + document.amver_dr.port_lat_min.value + document.amver_dr.port_north_south.value + '/' 
+		+ document.amver_dr.port_lon_deg.value + document.amver_dr.port_lon_min.value + document.amver_dr.port_east_west.value
+		+ '/' + document.amver_dr.port_day.value + document.amver_dr.port_hour.value + document.amver_dr.port_minute.value + ' ' + document.amver_dr.port_month.value + '//\n'
+		+ l_lines_str
+		+ 'M/' + document.amver_dr.sat_num.value + '//\n'
+		+ 'X/' + document.amver_dr.remarks.value + '//\n'
+		+ 'Y/' + get_relay_checked() + '//\n'
+		+ 'Z/EOR//';
+
+		document.amver_dr.dr_code.value = message;
+		document.getElementById("header").innerHTML="<a href='mailto:amvermsg@amver.com&subject=AMVER DR&body=AMVER DR&body=" + message.replace(/\n/g, "%0D%0A") +"'>SEND</a>";
+	}
+	
+	function add_line() {
+		var l_text = document.amver_dr.l_lines_area.value;
+		document.amver_dr.l_lines_area.value = l_text
+		+ 'L/'
+		+ document.amver_dr.nav_method.value + '/'
+		+ document.amver_dr.leg_speed.value + '/'
+		+ document.amver_dr.temp_port_name.value.toUpperCase() + '/'
+		+ document.amver_dr.temp_port_lat_deg.value + '/'
+		+ document.amver_dr.temp_port_lat_min.value + '/'
+		+ document.amver_dr.temp_port_north_south.value + '/'
+		+ document.amver_dr.temp_port_lon_deg.value + '/'
+		+ document.amver_dr.temp_port_lon_min.value + '/'
+		+ document.amver_dr.temp_port_east_west.value + '/'
+		+ document.amver_dr.temp_day.value
+		+ document.amver_dr.temp_hour.value
+		+ document.amver_dr.temp_minute.value + ' '
+		+ document.amver_dr.temp_month.value + '/'
+		+ document.amver_dr.temp_temp_day.value
+		+ document.amver_dr.temp_temp_hour.value
+		+ document.amver_dr.temp_temp_minute.value + ' '
+		+ document.amver_dr.temp_temp_month.value
+		+ '//\n';
+	}
+	
+	function remove_last() {
+		var l_text, len, outputStr;
+		var output = new Array();
+		l_text = document.amver_dr.l_lines_area.value.split("\n");
+		len = l_text.length;
+		if (l_text[len-1] == "")
+			len--;
+		outputStr = "";
+		for (var i=0; i<len-1; i++) {
+			if (l_text[i] != "")
+				outputStr = outputStr + l_text[i] + '\n';
+		}
+		document.amver_dr.l_lines_area.value = outputStr;
+	}
+	
+	function add_last() {
+		var l_text = document.amver_dr.l_lines_area.value;
+		document.amver_dr.l_lines_area.value = l_text + "L/" + document.amver_dr.nav_method.value + '//\n';
+	}
+	
+	function save_l_lines() {
+		l_lines_str = document.amver_dr.l_lines_area.value;
+		generate_dr();
+	}
+	
+	function get_date() {
+		month = new Array("01","02","03","04","05","06","07","08","09","10","11","12");
+		month_abbrev = new Array("JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"); 
+		day = new Array("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31") 
+		hour = new Array("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23") 
+		minute = new Array("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59"); 
+		d = new Date();	
+		current_month = d.getMonth();
+		current_day = d.getDate()-1;
+		current_hour = d.getHours()-1;
+		current_minutes = d.getMinutes()-1;
+	
+		// Creates month dropdown list and selects the current month
+		for (var i=0; i<12; i++) {	
+			var fm = document.amver_dr.month.options;	
+			fm[fm.length] = new Option(month[i], month_abbrev[i]);
+			var dfm = document.amver_dr.port_month.options;	
+			dfm[dfm.length] = new Option(month[i], month_abbrev[i]);
+			var tfm = document.amver_dr.temp_month.options;	
+			tfm[tfm.length] = new Option(month[i], month_abbrev[i]);
+			var ttfm = document.amver_dr.temp_temp_month.options;	
+			ttfm[ttfm.length] = new Option(month[i], month_abbrev[i]);
+		}
+		document.amver_dr.month[current_month].selected = "1";
+		
+		// Creates day dropdown list and selects the current day
+		for (var i=0; i<31; i++) {	
+			var fm = document.amver_dr.day.options;	
+			fm[fm.length] = new Option(day[i], day[i]);
+			var dfm = document.amver_dr.port_day.options;	
+			dfm[dfm.length] = new Option(day[i], day[i]);
+			var tfm = document.amver_dr.temp_day.options;	
+			tfm[tfm.length] = new Option(day[i], day[i]);
+			var ttfm = document.amver_dr.temp_temp_day.options;	
+			ttfm[ttfm.length] = new Option(day[i], day[i]);
+		}
+		document.amver_dr.day[current_day].selected = "1";
+		
+		// Creates hour dropdown list and selects the current hour
+		for (var i=0; i<23; i++) {	
+			var fm = document.amver_dr.hour.options;	
+			fm[fm.length] = new Option(hour[i], hour[i]);
+			var dfm = document.amver_dr.port_hour.options;	
+			dfm[dfm.length] = new Option(hour[i], hour[i]);
+			var tfm = document.amver_dr.temp_hour.options;	
+			tfm[tfm.length] = new Option(hour[i], hour[i]);
+			var ttfm = document.amver_dr.temp_temp_hour.options;	
+			ttfm[ttfm.length] = new Option(hour[i], hour[i]);
+		}
+		document.amver_dr.hour[current_hour].selected = "1";
+		
+		// Creates minute dropdown list and selects the current minute
+		for (var i=0; i<59; i++) {	
+			var fm = document.amver_dr.minute.options;	
+			fm[fm.length] = new Option(minute[i], minute[i]);
+			var dfm = document.amver_dr.port_minute.options;	
+			dfm[dfm.length] = new Option(minute[i], minute[i]);
+			var tfm = document.amver_dr.temp_minute.options;	
+			tfm[tfm.length] = new Option(minute[i], minute[i]);
+			var ttfm = document.amver_dr.temp_temp_minute.options;	
+			ttfm[ttfm.length] = new Option(minute[i], minute[i]);
+		}
+		document.amver_dr.minute[current_minutes].selected = "1";
+	}
+	
+	function select_sp() {
+		document.amver_dr.dr_code.focus();
+		document.amver_dr.dr_code.select();
+	}
+	
+	function get_relay_checked() {
+		var relay_value = "";
+		for (var i=0; i<document.amver_dr.relay.length; i++) {
+			if (document.amver_dr.relay[i].checked) {
+				relay_value = relay_value + '/' + document.amver_dr.relay[i].value;
+			}
+		}
+		return relay_value;
+	}
+	
+</script>
+</head>
+<body onload="get_date();">
+<h1>Amver Deviation Report</h1>
+<form name="amver_dr">
+
+<table id="invis" width="500">
+	<tr>
+		<td colspan="4">Select the desired report type with the buttons below.</td>
+	</tr>
+	<tr>
+		<td><input type="submit" value="Sailing Plan"/></td>
+		<td><input type="submit" value="Position Rep"/></td>
+		<td><input type="submit" value="Deviation Rep"/></td>
+		<td><input type="submit" value="Final Arrival"/></td>
+	</tr>
+</table>
+
+<table id="output">
+	<tr>
+		<td>Click your report below and copy it.</td>
+	</tr>
+	<tr>
+		<td><textarea name="dr_code" cols="45" rows="15" readonly onclick="select_dr()" id="textarea"></textarea></td>
+	</tr>
+	<tr>
+		<td>OR</td>
+	</tr>
+
+	<tr>
+		<td><h1 id="header"></h1></td>
+	</tr>
+</table>
+
+<table width="500">
+	
+	<tr>
+		<td colspan="2">To generate your Amver Deviation Report, fill out all of the information below.  The report will be automatically created for you.  When you are finished you can either copy and paste the message to send it, or if you have outlook or an email client installed on your computer, you can just click the SEND link.</td>
+	</tr>
+	<tr>
+		<td><LABEL for="vessel_name">Vessel Name: </LABEL></td>
+		<td><input type="text" name="vessel_name" onKeyUp="generate_dr()" id="text_input" maxlength="26"/></td>
+	</tr>
+	<tr>
+		<td><LABEL for="call_sign">Call Sign: </LABEL></td>
+		<td><input type="text" name="call_sign" onKeyUp="generate_dr()" id="text_input" maxlength="15"/></td>
+	</tr>
+	<tr>
+		<td colspan="2"><hr></hr></td>
+	</tr>
+	<tr>
+		<td colspan="2">
+				<LABEL for="month">Current Month: </LABEL>
+				<select name="month" onChange="generate_dr()" id="dropdown_input">
+
+				</select>
+				<LABEL for="day">Day: </LABEL>
+				<select name="day" onChange="generate_dr()" id="dropdown_input">
+					
+				</select>
+				<LABEL for="hour">Hour: </LABEL>
+				<select name="hour" onChange="generate_dr()" id="dropdown_input">
+					
+				</select>
+				<LABEL for="minute">Minute: </LABEL>
+				<select name="minute" onChange="generate_dr()" id="dropdown_input">
+					
+				</select>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2"><hr></hr></td>
+	</tr>
+	<tr>
+		<td><LABEL for="lat_deg">Latitude: </LABEL></td>
+		<td>
+					<LABEL for="lat_deg">Degrees: </LABEL>
+					<select name="lat_deg" onChange="generate_dr()" id="dropdown_input">
+					<option value="00">00</option>
+					<option value="01">01</option>
+					<option value="02">02</option>
+					<option value="03">03</option>
+					<option value="04">04</option>
+					<option value="87">87</option>
+					<option value="88">88</option>
+					<option value="89">89</option>
+				</select>
+				<LABEL for="lat_min">Minutes: </LABEL>
+					<select name="lat_min" onChange="generate_dr()" id="dropdown_input">
+					<option value="00">00</option>
+					<option value="01">01</option>
+					<option value="02">02</option>
+					<option value="03">03</option>
+					<option value="04">04</option>
+					<option value="05">05</option>
+					<option value="06">06</option>
+					<option value="07">07</option>
+					<option value="08">08</option>
+				</select>
+				<select name="north_south" onChange="generate_dr()" id="dropdown_input_wide">
+					<option value="N">North</option>
+					<option value="S">South</option>
+				</select>
+		</td>
+	</tr>
+	<tr>
+		<td><LABEL for="lon_deg">Longitude: </LABEL></td>
+		<td>
+					<LABEL for="lon_deg">Degrees: </LABEL>
+					<select name="lon_deg" onChange="generate_dr()" id="dropdown_input">
+					<option value="000">000</option>
+					<option value="001">001</option>
+					<option value="002">002</option>
+					<option value="003">003</option>
+					<option value="004">004</option>
+					<option value="005">005</option>
+					<option value="006">006</option>
+					<option value="007">007</option>
+				</select>
+				<LABEL for="lon_min">Minutes: </LABEL>
+					<select name="lon_min" onChange="generate_dr()" id="dropdown_input">
+					<option value="00">00</option>
+					<option value="01">01</option>
+					<option value="02">02</option>
+					<option value="03">03</option>
+					<option value="04">04</option>
+					<option value="05">05</option>
+				</select>
+				<select name="east_west" onChange="generate_dr()" id="dropdown_input_wide">
+					<option value="E">East</option>
+					<option value="W">West</option>
+				</select>
+		</td>
+	</tr>
+	<tr>
+		<td><LABEL for="course">Course: </LABEL></td>
+		<td>
+					<select name="course" onChange="generate_dr()" id="dropdown_input">
+					<option value="000">000</option>
+					<option value="001">001</option>
+					<option value="002">002</option>
+					<option value="003">003</option>
+					<option value="004">004</option>
+					<option value="005">005</option>
+					</select>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<LABEL for="speed">Speed: </LABEL>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<select name="speed" onChange="generate_dr()" id="dropdown_input">
+					<option value="00.0">00</option>
+					<option value="01.0">01</option>
+					<option value="02.0">02</option>
+					<option value="03.0">03</option>
+					<option value="04.0">04</option>
+					<option value="05.0">05</option>
+				</select>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2"><hr></hr></td>
+	</tr>
+	<tr>
+		<td><LABEL for="port_name">Destination Port Name: </LABEL></td>
+		<td><input type="text" name="port_name" onKeyUp="generate_dr()" id="text_input" maxlength="26"/></td>
+	</tr>
+	
+	<tr>
+		<td><LABEL for="port_lat_deg">Latitude: </LABEL></td>
+		<td>
+					<LABEL for="port_lat_deg">Degrees: </LABEL>
+					<select name="port_lat_deg" onChange="generate_dr()" id="dropdown_input">
+					<option value="00">00</option>
+					<option value="01">01</option>
+					<option value="02">02</option>
+					<option value="03">03</option>
+					<option value="04">04</option>
+					<option value="87">87</option>
+					<option value="88">88</option>
+					<option value="89">89</option>
+				</select>
+				<LABEL for="port_lat_min">Minutes: </LABEL>
+					<select name="port_lat_min" onChange="generate_dr()" id="dropdown_input">
+					<option value="00">00</option>
+					<option value="01">01</option>
+					<option value="02">02</option>
+					<option value="03">03</option>
+					<option value="04">04</option>
+					<option value="05">05</option>
+					<option value="06">06</option>
+					<option value="07">07</option>
+					<option value="08">08</option>
+				</select>
+				<select name="port_north_south" onChange="generate_dr()" id="dropdown_input_wide">
+					<option value="N">North</option>
+					<option value="S">South</option>
+				</select>
+		</td>
+	</tr>
+	<tr>
+		<td><LABEL for="port_lon_deg">Longitude: </LABEL></td>
+		<td>
+					<LABEL for="port_lon_deg">Degrees: </LABEL>
+					<select name="port_lon_deg" onChange="generate_dr()" id="dropdown_input">
+					<option value="000">000</option>
+					<option value="001">001</option>
+					<option value="002">002</option>
+					<option value="003">003</option>
+					<option value="004">004</option>
+					<option value="005">005</option>
+					<option value="006">006</option>
+					<option value="007">007</option>
+				</select>
+				<LABEL for="port_lon_min">Minutes: </LABEL>
+					<select name="port_lon_min" onChange="generate_dr()" id="dropdown_input">
+					<option value="00">00</option>
+					<option value="01">01</option>
+					<option value="02">02</option>
+					<option value="03">03</option>
+					<option value="04">04</option>
+					<option value="05">05</option>
+				</select>
+				<select name="port_east_west" onChange="generate_dr()" id="dropdown_input_wide">
+					<option value="E">East</option>
+					<option value="W">West</option>
+				</select>
+		</td>
+	</tr>
+	
+	<tr>
+		<td colspan="2">
+				<LABEL for="port_month">Destination ETA Month: </LABEL>
+				<select name="port_month" onChange="generate_dr()" id="dropdown_input">
+
+				</select>
+				<LABEL for="port_day">Day: </LABEL>
+				<select name="port_day" onChange="generate_dr()" id="dropdown_input">
+					
+				</select>
+				<LABEL for="port_hour">Hour: </LABEL>
+				<select name="port_hour" onChange="generate_dr()" id="dropdown_input">
+					
+				</select>
+				<LABEL for="port_minute">Minute: </LABEL>
+				<select name="port_minute" onChange="generate_dr()" id="dropdown_input">
+					
+				</select>
+		</td>
+	</tr>
+
+	<tr>
+		<td colspan="2"><hr></hr></td>
+	</tr>
+	
+	<tr>
+		<td><LABEL for="nav_method">Navigation Method: </LABEL></td>
+		<td><select name="nav_method" id="dropdown_input_wide_medic">
+			<option value="COASTAL">COASTAL</option>
+			<option value="GC">GREAT CIRCLE</option>
+			<option value="RL">RHUMB LINE</option>
+			</select>
+		</td>
+	</tr>
+	
+	<tr>
+		<td><LABEL for="leg_speed">Leg Speed: </LABEL></td>
+				<td><select name="leg_speed" onChange="generate_dr()" id="dropdown_input">
+					<option value="00.0">00</option>
+					<option value="01.0">01</option>
+					<option value="02.0">02</option>
+					<option value="03.0">03</option>
+					<option value="04.0">04</option>
+					<option value="05.0">05</option>
+				</select></td>
+	</tr>
+	
+	<tr>
+		<td><LABEL for="temp_port_name">Port/Landmark Name: </LABEL></td>
+		<td><input type="text" name="temp_port_name" onKeyUp="generate_dr()" id="text_input" maxlength="26"/></td>
+	</tr>
+	
+	<tr>
+		<td><LABEL for="temp_port_lat_deg">Latitude: </LABEL></td>
+		<td>
+					<LABEL for="temp_port_lat_deg">Degrees: </LABEL>
+					<select name="temp_port_lat_deg" onChange="generate_dr()" id="dropdown_input">
+					<option value="00">00</option>
+					<option value="01">01</option>
+					<option value="02">02</option>
+					<option value="03">03</option>
+					<option value="04">04</option>
+					<option value="87">87</option>
+					<option value="88">88</option>
+					<option value="89">89</option>
+				</select>
+				<LABEL for="temp_port_lat_min">Minutes: </LABEL>
+					<select name="temp_port_lat_min" onChange="generate_dr()" id="dropdown_input">
+					<option value="00">00</option>
+					<option value="01">01</option>
+					<option value="02">02</option>
+					<option value="03">03</option>
+					<option value="04">04</option>
+					<option value="05">05</option>
+					<option value="06">06</option>
+					<option value="07">07</option>
+					<option value="08">08</option>
+				</select>
+				<select name="temp_port_north_south" onChange="generate_dr()" id="dropdown_input_wide">
+					<option value="N">North</option>
+					<option value="S">South</option>
+				</select>
+		</td>
+	</tr>
+	<tr>
+		<td><LABEL for="temp_port_lon_deg">Longitude: </LABEL></td>
+		<td>
+					<LABEL for="temp_port_lon_deg">Degrees: </LABEL>
+					<select name="temp_port_lon_deg" onChange="generate_dr()" id="dropdown_input">
+					<option value="000">000</option>
+					<option value="001">001</option>
+					<option value="002">002</option>
+					<option value="003">003</option>
+					<option value="004">004</option>
+					<option value="005">005</option>
+					<option value="006">006</option>
+					<option value="007">007</option>
+				</select>
+				<LABEL for="temp_port_lon_min">Minutes: </LABEL>
+					<select name="temp_port_lon_min" onChange="generate_dr()" id="dropdown_input">
+					<option value="00">00</option>
+					<option value="01">01</option>
+					<option value="02">02</option>
+					<option value="03">03</option>
+					<option value="04">04</option>
+					<option value="05">05</option>
+				</select>
+				<select name="temp_port_east_west" onChange="generate_dr()" id="dropdown_input_wide">
+					<option value="E">East</option>
+					<option value="W">West</option>
+				</select>
+		</td>
+	</tr>
+	
+	<tr>
+		<td colspan="2">
+				<LABEL for="temp_month">Layover Arrival Month: </LABEL>
+				<select name="temp_month" onChange="generate_dr()" id="dropdown_input">
+
+				</select>
+				<LABEL for="temp_day">Day: </LABEL>
+				<select name="temp_day" onChange="generate_dr()" id="dropdown_input">
+					
+				</select>
+				<LABEL for="temp_hour">Hour: </LABEL>
+				<select name="temp_hour" onChange="generate_dr()" id="dropdown_input">
+					
+				</select>
+				<LABEL for="temp_minute">Minute: </LABEL>
+				<select name="temp_minute" onChange="generate_dr()" id="dropdown_input">
+					
+				</select>
+		</td>
+	</tr>
+	
+	<tr>
+		<td colspan="2">
+				<LABEL for="temp_temp_month">Layover Depart Month: </LABEL>
+				<select name="temp_temp_month" onChange="generate_dr()" id="dropdown_input">
+
+				</select>
+				<LABEL for="temp_temp_day">Day: </LABEL>
+				<select name="temp_temp_day" onChange="generate_dr()" id="dropdown_input">
+					
+				</select>
+				<LABEL for="temp_temp_hour">Hour: </LABEL>
+				<select name="temp_temp_hour" onChange="generate_dr()" id="dropdown_input">
+					
+				</select>
+				<LABEL for="temp_temp_minute">Minute: </LABEL>
+				<select name="temp_temp_minute" onChange="generate_dr()" id="dropdown_input">
+					
+				</select>
+		</td>
+	</tr>
+	
+	<tr>
+		<td colspan="2">
+		<table>
+			<tr>
+				<td>Click the "Add Line" button when done with line to save</td>
+				<td><input type="button" value="Add Line" onClick="add_line()"></td>
+			</tr>
+			<tr>
+				<td>Select navigation method and click "Add Final" button for final line</td>
+				<td><input type="button" value="Add Final" onClick="add_last()" ></td>
+			</tr>
+		</table>
+		</td>
+	</tr>
+	
+	<tr>
+		<td colspan="2"><textarea name="l_lines_area" cols="60" rows="5" readonly ></textarea></td>
+	</tr>
+
+	<tr>
+		<td>&nbsp;</td>
+		<td><input type="button" value="Clear Last Line" onClick="remove_last()" />
+		
+		<input type="button" value="Save to Report" onClick="save_l_lines()" /></td>
+	</tr>
+	
+	<tr>
+		<td colspan="2"><hr></hr></td>
+	</tr>
+
+	<tr>
+		<td><LABEL for="sat_num">Sat#: </LABEL></td>
+		<td><input type="text" name="sat_num" onKeyUp="generate_dr()" id="text_input" maxlength="10"/></td>
+
+
+<tr>
+		<td><LABEL for="remarks">Remarks:  </LABEL></td>
+		<td><input type="text" name="remarks" onKeyUp="generate_dr()" id="text_input" maxlength="50"/></td>
+
+
+
+	<tr>
+		<td><LABEL for="relay">Relay: </LABEL></td>
+		<td>
+			<input type="checkbox" name="relay" value="MAREP" onClick="generate_dr()" />MAREP
+			<input type="checkbox" name="relay" value="JASREP" onClick="generate_dr()" />JASREP
+			<input type="checkbox" name="relay" value="AUSREP" onClick="generate_dr()" />AUSREP
+			<input type="checkbox" name="relay" value="CHILREP" onClick="generate_dr()" />CHILREP
+		</td>
+	</tr>
+</table>
+</form>
+</body>
+</html>
