@@ -95,8 +95,6 @@
 			//if you are closing one the one that is open, display the description box
 			if (display == "block")
 				document.getElementById("desc_box").style.display = "block";
-			
-			generateReport();
 		}
 		
 		function closeAll() {
@@ -221,20 +219,35 @@
 		}
 		
 		function generateReport() {
+			getSelect("current-pos-crs");
 			var message = amverAndALines();
 			if (report=="SP") {
-				message += bLine() + eLine() + fLine();
+				message += bLine() + eLine() + fLine() + gLine() + iLine() + lLine() + mLine()
+					+ vLine() + xLine() + yLine();
 			}
 			else if (report=="PR") {
-				message += bLine() + cLine() + eLine() + fLine();
+				message += bLine() + cLine() + eLine() + fLine() + iLine() + mLine() + xLine() + yLine();
 			}
 			else if (report=="DR") {
-				message += bLine() + cLine() + eLine() + fLine();
+				message += bLine() + cLine() + eLine() + fLine() + iLine() + lLine() + mLine()
+					+ xLine() + yLine();
 			}
 			else if (report=="FR") {
-				
+				message += kLine() + xLine() + yLine();
 			}
+			message += zLine();
 			populateOutput(message);
+		}
+		
+		/*FOR COMPATIBILITY WITH AN IE BUG (8 and below)
+		  ALSO CATCHES ANY UNFORSEEN BROWSERS THAT HAVE SIMILAR BUG*/
+		//Gets value from a select element. document.getElementById(name).value doesn't work in IE
+		function getSelect(e_name) {
+			var elem = document.getElementById(e_name);
+			if (elem.value == "")
+				return elem.options[elem.selectedIndex].text;
+			else
+				return elem.value;
 		}
 		
 		/*REPORT LINE GENERATING FUNCTIONS*/
@@ -248,34 +261,126 @@
 		
 		//TIME - SP, PR, DR
 		function bLine() {
-			var month = document.getElementById("current-pos-month").value;
-			var day = document.getElementById("current-pos-day").value;
-			var hour = document.getElementById("current-pos-hour").value;
-			var min = document.getElementById("current-pos-min").value;
+			var pref = "current-pos";
+			var month = getSelect(pref+"-month");
+			var day = getSelect(pref+"-day");
+			var hour = getSelect(pref+"-hour");
+			var min = getSelect(pref+"-min");
 			return "B/" + day + hour + min + "Z " + month + "//\n";
 		}
 		
 		//LAT, LONG - PR, DR
 		function cLine() {
-			var lat_deg = document.getElementById("current-pos-lat-deg").value;
-			var lat_min = document.getElementById("current-pos-lat-min").value;
-			var lat_dir = document.getElementById("current-pos-lat-dir").value;
-			var lon_deg = document.getElementById("current-pos-lon-deg").value;
-			var lon_min = document.getElementById("current-pos-lon-min").value;
-			var lon_dir = document.getElementById("current-pos-lon-dir").value;
+			var pref = "current-pos";
+			var lat_deg = getSelect(pref+"-lat-deg");
+			var lat_min = getSelect(pref+"-lat-min");
+			var lat_dir = getSelect(pref+"-lat-dir");
+			var lon_deg = getSelect(pref+"-lon-deg");
+			var lon_min = getSelect(pref+"-lon-min");
+			var lon_dir = getSelect(pref+"-lon-dir");
 			return "C/" + lat_deg + lat_min + lat_dir + "/" + lon_deg + lon_min + lon_dir + "//\n";
 		}
 		
 		//COURSE - SP, PR, DR
 		function eLine() {
-			var crs = document.getElementById("current-pos-crs").value;
+			var pref = "current-pos";
+			var crs = getSelect(pref+"-crs");
 			return "E/" + crs + "//\n";
 		}
 		
 		//SPEED - SP, PR, DR
 		function fLine() {
-			var spd = document.getElementById("current-pos-spd").value;
+			var pref = "current-pos";
+			var spd = getSelect(pref+"-spd");
 			return "F/" + spd + "//\n";
+		}
+		
+		//DEPARTURE PORT INFO - SP
+		function gLine() {
+			var pref = "dept-port";
+			var p_name = document.getElementById(pref).value;
+			var lat_deg = getSelect(pref+"-lat-deg");
+			var lat_min = getSelect(pref+"-lat-min");
+			var lat_dir = getSelect(pref+"-lat-dir");
+			var lon_deg = getSelect(pref+"-lon-deg");
+			var lon_min = getSelect(pref+"-lon-min");
+			var lon_dir = getSelect(pref+"-lon-dir");
+			return "G/" + p_name + "/" + lat_deg + lat_min + lat_dir + "/"
+				+ lon_deg + lon_min + lon_dir + "//\n";
+		}
+		
+		//DESTINATION PORT INFO - SP, sometimes DR, recommended in FR
+		function iLine() {
+			var pref = "dest-port";
+			var p_name = document.getElementById(pref).value;
+			var lat_deg = getSelect(pref+"-lat-deg");
+			var lat_min = getSelect(pref+"-lat-min");
+			var lat_dir = getSelect(pref+"-lat-dir");
+			var lon_deg = getSelect(pref+"-lon-deg");
+			var lon_min = getSelect(pref+"-lon-min");
+			var lon_dir = getSelect(pref+"-lon-dir");
+			var month = getSelect(pref+"-month");
+			var day = getSelect(pref+"-day");
+			var hour = getSelect(pref+"-hour");
+			var min = getSelect(pref+"-min");
+			return "I/" + p_name + "/" + lat_deg + lat_min + lat_dir + "/"
+				+ lon_deg + lon_min + lon_dir + "/" + day + hour + min + "Z " + month + "//\n";
+		}
+		
+		//ARRIVAL PORT INFO - FR
+		function kLine() {
+			var pref = "dest-port";
+			var p_name = document.getElementById(pref).value;
+			var lat_deg = getSelect(pref+"-lat-deg");
+			var lat_min = getSelect(pref+"-lat-min");
+			var lat_dir = getSelect(pref+"-lat-dir");
+			var lon_deg = getSelect(pref+"-lon-deg");
+			var lon_min = getSelect(pref+"-lon-min");
+			var lon_dir = getSelect(pref+"-lon-dir");
+			var month = getSelect(pref+"-month");
+			var day = getSelect(pref+"-day");
+			var hour = getSelect(pref+"-hour");
+			var min = getSelect(pref+"-min");
+			return "K/" + p_name + "/" + lat_deg + lat_min + lat_dir + "/"
+				+ lon_deg + lon_min + lon_dir + "/" + day + hour + min + "Z " + month + "//\n";
+		}
+		
+		//NAVIGATION METHOD - SP, sometimes DR
+		function lLine() {
+			return "L/TO FINISH LATER//\n";
+		}
+		
+		//SAT# - OPTIONAL in SP, PR, DR
+		function mLine() {
+			var pref = "sat-num";
+			var s_num = document.getElementById(pref).value;
+			return "M/" + s_num + "//\n";
+		}
+		
+		//MEDICAL - OPTIONAL in SP
+		function vLine() {
+			var pref = "medical";
+			var med = getSelect(pref);
+			return "V/" + med + "//\n";
+		}
+		
+		//REMARKS - OPTIONAL in ALL
+		function xLine() {
+			var pref = "remarks";
+			var rem = document.getElementById(pref).value;
+			return "X/" + rem + "//\n";
+		}
+		
+		//RELAY - OPTIONAL in ALL
+		function yLine() {
+			var pref = "relay";
+			var rel = getSelect(pref);
+			return "Y/" + rel + "//\n";
+		}
+		
+		//END OF REPORT - ALL
+		function zLine() {
+			return "Z/EOR//";
 		}
 	</script>
 	
@@ -492,23 +597,23 @@
 				<div id="vessel_info" style="display:none">
 					<br />
 					<div class="row">
-						<div class="control-group span4 hidden-phone"><div class="controls">
+						<div class="control-group span4"><div class="controls">
 						<div class="input-prepend">
-							<span class="add-on">Lloyds #</span><input class="input-small" type="text" id="lly-num"/>
+							<span class="add-on">Lloyds #</span><input class="input-small" type="text" id="lly-num"/ onKeyUp="generateReport();">
 						</div></div></div>
-						<div class="control-group span4 hidden-phone"><div class="controls">
+						<div class="control-group span4"><div class="controls">
 						<div class="input-prepend">
-							<span class="add-on">Vessel Name</span><input class="input-medium" type="text" id="vess-name" value=""/>
+							<span class="add-on">Vessel Name</span><input class="input-medium" type="text" id="vess-name" onKeyUp="generateReport();"/>
 						</div></div></div>
-						<div class="control-group span4 hidden-phone"><div class="controls">
+						<div class="control-group span4"><div class="controls">
 						<div class="input-prepend">
-							<span class="add-on">Callsign</span><input class="input-small" type="text" id="callsign"/>
+							<span class="add-on">Callsign</span><input class="input-small" type="text" id="callsign" onKeyUp="generateReport();"/>
 						</div></div></div>
 					</div>
 					
-					<div class="row-fluid hidden-phone">
+					<div class="row-fluid">
 						<div class="span4"><input type="checkbox" id="rememberme"value="Y"/> Remember this vessel</div>
-						<div class="span8 hidden-phone">
+						<div class="span8">
 							Click 'remember this vessel' to save vessel<br />
 							information to your device and avoid reentry.<br /><br />
 						</div>
@@ -521,7 +626,7 @@
 						<div class="control-group span2">
 							<div class="controls">
 								<div class="input-prepend">
-									<span class="add-on">Course</span><select class="input-mini" id="current-pos-crs">
+									<span class="add-on">Course</span><select class="input-mini" id="current-pos-crs" onChange="generateReport();">
 										<option>01</option>
 										<option>12</option>
 									</select>
@@ -531,7 +636,7 @@
 						<div class="control-group span2">
 							<div class="controls">
 								<div class="input-prepend">
-									<span class="add-on">Speed</span><select class="input-mini" id="current-pos-spd">
+									<span class="add-on">Speed</span><select class="input-mini" id="current-pos-spd" onChange="generateReport();">
 										<option>01</option>
 										<option>12</option>
 									</select>
@@ -544,7 +649,7 @@
 						<div class="control-group span2">
 							<div class="controls">
 								<div class="input-prepend">
-									<span class="add-on">Month</span><select class="input-mini" id="current-pos-month">
+									<span class="add-on">Month</span><select class="input-mini" id="current-pos-month" onChange="generateReport();">
 										<option>01</option>
 										<option>12</option>
 									</select>
@@ -554,7 +659,7 @@
 						<div class="control-group span2">
 							<div class="controls">
 								<div class="input-prepend">
-									<span class="add-on">Day</span><select class="input-mini" id="current-pos-day">
+									<span class="add-on">Day</span><select class="input-mini" id="current-pos-day" onChange="generateReport();">
 										<option>01</option>
 										<option>31</option>
 									</select>
@@ -564,7 +669,7 @@
 						<div class="control-group span2">
 							<div class="controls">
 								<div class="input-prepend">
-									<span class="add-on">Hour</span><select class="input-mini" id="current-pos-hour">
+									<span class="add-on">Hour</span><select class="input-mini" id="current-pos-hour" onChange="generateReport();">
 										<option>00</option>
 										<option>23</option>
 									</select>
@@ -574,7 +679,7 @@
 						<div class="control-group span2">
 							<div class="controls">
 								<div class="input-prepend">
-									<span class="add-on">Min</span><select class="input-mini" id="current-pos-min">
+									<span class="add-on">Min</span><select class="input-mini" id="current-pos-min" onChange="generateReport();">
 										<option>00</option>
 										<option>59</option>
 									</select>
@@ -587,13 +692,13 @@
 						<div class="control-group span6">
 							<div class="controls">
 								<div class="input-prepend">
-									<span class="add-on">Latitude</span><select class="input-mini" id="current-pos-lat-deg">
+									<span class="add-on">Latitude</span><select class="input-mini" id="current-pos-lat-deg" onChange="generateReport();">
 										<option>deg</option>
 									</select>
-									<select class="input-mini" id="current-pos-lat-min">
+									<select class="input-mini" id="current-pos-lat-min" onChange="generateReport();">
 										<option>min</option>
 									</select>
-									<select class="input-small" id="current-pos-lat-dir">
+									<select class="input-small" id="current-pos-lat-dir" onChange="generateReport();">
 										<option>North</option>
 										<option>South</option>
 									</select>
@@ -603,13 +708,13 @@
 						<div class="control-group span6">
 							<div class="controls">
 								<div class="input-prepend">
-									<span class="add-on">Longitude</span><select class="input-mini" id="current-pos-lon-deg">
+									<span class="add-on">Longitude</span><select class="input-mini" id="current-pos-lon-deg" onChange="generateReport();">
 										<option>deg</option>
 									</select>
-									<select class="input-mini" id="current-pos-lon-min">
+									<select class="input-mini" id="current-pos-lon-min" onChange="generateReport();">
 										<option>min</option>
 									</select>
-									<select class="input-small" id="current-pos-lon-dir">
+									<select class="input-small" id="current-pos-lon-dir" onChange="generateReport();">
 										<option>East</option>
 										<option>West</option>
 									</select>
@@ -625,7 +730,7 @@
 						<div class="control-group">
 							<div class="controls">
 								<div class="input-prepend">
-									<span class="add-on">Port Name</span><input type="text" id="dept_port"/>
+									<span class="add-on">Port Name</span><input type="text" id="dept-port" onKeyUp="generateReport();"/>
 								</div>
 							</div>
 						</div>
@@ -635,13 +740,13 @@
 						<div class="control-group span6">
 							<div class="controls">
 								<div class="input-prepend">
-									<span class="add-on">Latitude</span><select class="input-mini">
+									<span class="add-on">Latitude</span><select class="input-mini" id="dept-port-lat-deg" onChange="generateReport();">
 										<option>deg</option>
 									</select>
-									<select class="input-mini">
+									<select class="input-mini" id="dept-port-lat-min" onChange="generateReport();">
 										<option>min</option>
 									</select>
-									<select class="input-small">
+									<select class="input-small" id="dept-port-lat-dir" onChange="generateReport();">
 										<option>North</option>
 										<option>South</option>
 									</select>
@@ -651,13 +756,13 @@
 						<div class="control-group span6">
 							<div class="controls">
 								<div class="input-prepend">
-									<span class="add-on">Longitude</span><select class="input-mini">
+									<span class="add-on">Longitude</span><select class="input-mini" id="dept-port-lon-deg" onChange="generateReport();">
 										<option>deg</option>
 									</select>
-									<select class="input-mini">
+									<select class="input-mini" id="dept-port-lon-min" onChange="generateReport();">
 										<option>min</option>
 									</select>
-									<select class="input-small">
+									<select class="input-small" id="dept-port-lon-dir" onChange="generateReport();">
 										<option>East</option>
 										<option>West</option>
 									</select>
@@ -673,7 +778,7 @@
 						<div class="control-group">
 							<div class="controls">
 								<div class="input-prepend">
-									<span class="add-on">Port Name</span><input type="text" id="dest_port"/>
+									<span class="add-on">Port Name</span><input type="text" id="dest-port" onKeyUp="generateReport();"/>
 								</div>
 							</div>
 						</div>
@@ -683,7 +788,7 @@
 						<div class="control-group span2">
 							<div class="controls">
 								<div class="input-prepend">
-									<span class="add-on">Month</span><select class="input-mini">
+									<span class="add-on">Month</span><select class="input-mini" id="dest-port-month" onChange="generateReport();">
 										<option>01</option>
 										<option>12</option>
 									</select>
@@ -693,7 +798,7 @@
 						<div class="control-group span2">
 							<div class="controls">
 								<div class="input-prepend">
-									<span class="add-on">Day</span><select class="input-mini">
+									<span class="add-on">Day</span><select class="input-mini" id="dest-port-day" onChange="generateReport();">
 										<option>01</option>
 										<option>31</option>
 									</select>
@@ -703,7 +808,7 @@
 						<div class="control-group span2">
 							<div class="controls">
 								<div class="input-prepend">
-									<span class="add-on">Hour</span><select class="input-mini">
+									<span class="add-on">Hour</span><select class="input-mini" id="dest-port-hour" onChange="generateReport();">
 										<option>00</option>
 										<option>23</option>
 									</select>
@@ -713,7 +818,7 @@
 						<div class="control-group span2">
 							<div class="controls">
 								<div class="input-prepend">
-									<span class="add-on">Min</span><select class="input-mini">
+									<span class="add-on">Min</span><select class="input-mini" id="dest-port-min" onChange="generateReport();">
 										<option>00</option>
 										<option>59</option>
 									</select>
@@ -726,13 +831,13 @@
 						<div class="control-group span6">
 							<div class="controls">
 								<div class="input-prepend">
-									<span class="add-on">Latitude</span><select class="input-mini">
+									<span class="add-on">Latitude</span><select class="input-mini" id="dest-port-lat-deg" onChange="generateReport();">
 										<option>deg</option>
 									</select>
-									<select class="input-mini">
+									<select class="input-mini" id="dest-port-lat-min" onChange="generateReport();">
 										<option>min</option>
 									</select>
-									<select class="input-small">
+									<select class="input-small" id="dest-port-lat-dir" onChange="generateReport();">
 										<option>North</option>
 										<option>South</option>
 									</select>
@@ -742,13 +847,13 @@
 						<div class="control-group span6">
 							<div class="controls">
 								<div class="input-prepend">
-									<span class="add-on">Longitude</span><select class="input-mini">
+									<span class="add-on">Longitude</span><select class="input-mini" id="dest-port-lon-deg" onChange="generateReport();">
 										<option>deg</option>
 									</select>
-									<select class="input-mini">
+									<select class="input-mini" id="dest-port-lon-min" onChange="generateReport();">
 										<option>min</option>
 									</select>
-									<select class="input-small">
+									<select class="input-small" id="dest-port-lon-dir" onChange="generateReport();">
 										<option>East</option>
 										<option>West</option>
 									</select>
@@ -919,7 +1024,7 @@
 						<div class="control-group span8">
 							<div class="controls">
 								<div class="input-prepend">
-									<span class="add-on">Remarks</span><input class="span8" type="text" />
+									<span class="add-on">Remarks</span><input class="span8" type="text" id="remarks" onKeyUp="generateReport();"/>
 								</div>
 							</div>
 						</div>
@@ -927,7 +1032,7 @@
 						<div class="control-group span4">
 							<div class="controls">
 								<div class="input-prepend">
-									<span class="add-on">Relay</span><select class="input-small" id="relay">
+									<span class="add-on">Relay</span><select class="input-small" id="relay" onChange="generateReport();">
 										<option value="">NONE</option>
 										<option value="JASREP">JASREP</option>
 										<option value="CHILREP">CHILREP</option>
@@ -939,10 +1044,10 @@
 					</div>
 					
 					<div class="row-fluid" id="optional-sat" style="display:block">
-						<div class="control-group span4">
+						<div class="control-group span6">
 							<div class="controls">
 								<div class="input-prepend">
-									<span class="add-on">Sat #</span><input type="text" />
+									<span class="add-on">Sat #</span><input type="text" id="sat-num" onKeyUp="generateReport();"/>
 								</div>
 							</div>
 						</div>
@@ -952,7 +1057,7 @@
 						<div class="control-group span4">
 							<div class="controls">
 								<div class="input-prepend">
-									<span class="add-on">Medical</span><select class="input-medium" id="medical">
+									<span class="add-on">Medical</span><select class="input-medium" id="medical" onChange="generateReport();">
 										<option value="">NONE</option>
 										<option value="DOCTOR">DOCTOR</option>
 										<option value="NURSE">NURSE</option>
